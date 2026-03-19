@@ -97,7 +97,7 @@ get_persons <- function() {
 get_collections <- function() {
   dbGetQuery(db, "SELECT collection_id, name FROM collection ORDER BY name")
 }
-
+options(shiny.useragg = FALSE)
 # ── UI ────────────────────────────────────────────────────────
 ui <- page_navbar(
   title = tags$span(
