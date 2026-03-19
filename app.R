@@ -13,20 +13,15 @@ library(DT)
 library(bslib)
 library(shinyFeedback)
 library(pool)
-
+options(shiny.launch.browser = TRUE)
 # Null-coalescing helper (empty string or NA -> b)
 `%||%` <- function(a, b) if (!is.null(a) && length(a) > 0 && !is.na(a) && trimws(a) != "") a else b
 
 # ── Database connection ───────────────────────────────────────
 # Using SQLite for portability. Swap driver + args for PostgreSQL:
 #   pool::dbPool(RPostgres::Postgres(), dbname=..., host=..., ...)
-db <- dbPool(
-  drv     = RSQLite::SQLite(),
-  dbname  = "museum.db"   # will be created on first run
-)
-
-onStop(function() poolClose(db))
-
+db <- dbConnect(RSQLite::SQLite(), "museum.db")
+onStop(function() dbDisconnect(db))
 # ── Create tables if they don't exist ────────────────────────
 dbExecute(db, "PRAGMA foreign_keys = ON")
 
@@ -110,8 +105,6 @@ ui <- page_navbar(
     bootswatch  = "flatly",
     primary     = "#2C4A6E",
     secondary   = "#8B6F5E",
-    base_font   = font_google("Lato"),
-    heading_font = font_google("Playfair Display")
   ),
   # ── PERSONS tab ─────────────────────────────────────────────
   nav_panel(
